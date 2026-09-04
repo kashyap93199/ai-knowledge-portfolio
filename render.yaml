@@ -1,0 +1,41 @@
+# Render blueprint for the AI Knowledge Portfolio.
+#
+# IMPORTANT: persistent disks require a PAID web service (Starter $7/mo or
+# higher). Free web services have an ephemeral filesystem, so the SQLite
+# database would be wiped on redeploys/restarts — use the free tier only for
+# throwaway previews.
+#
+# To deploy:
+#   1. Push this repo to GitHub and connect it to Render.
+#  2. New → Blueprint → pick this repo (render.yaml is detected automatically).
+#  3. In the service's Environment tab, set:
+#       ADMIN_USERNAME, ADMIN_PASSWORD, SESSION_SECRET
+#     (SITE_URL and DATABASE_PATH are set below; you can override SITE_URL
+#     after the first deploy with your final domain.)
+
+services:
+  - type: web
+    name: ai-knowledge-portfolio
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    plan: starter # paid plan — required for the persistent disk
+    autoDeploy: true
+    healthCheckPath: /
+    preDeployCommand: npm run seed # idempotent: seeds the empty volume DB
+    disk:
+      name: sqlite-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_ENV
+        value: production
+      # SITE_URL is auto-detected from RENDER_EXTERNAL_URL by the app.
+      # Optional: set SITE_URL to your final custom domain later.
+      - key: DATABASE_PATH
+        value: /var/data/portfolio.db
+      - key: ADMIN_USERNAME
+        sync: false # set in the Render dashboard
+      - key: ADMIN_PASSWORD
+        sync: false # set in the Render dashboard
+      - key: SESSION_SECRET
+        sync: false # set in the Render dashboard

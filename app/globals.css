@@ -1,0 +1,140 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+/* Light theme adjustments */
+html:not(.dark) {
+  color-scheme: light;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  @apply bg-ink text-slate-200 antialiased;
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+}
+
+html:not(.dark) body {
+  @apply bg-paper text-slate-800;
+}
+
+/* Visible, consistent focus states for keyboard users */
+:focus-visible {
+  outline: 2px solid theme("colors.cyan.soft");
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Skip link */
+.skip-link {
+  @apply sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-cyan focus:px-4 focus:py-2 focus:font-semibold focus:text-ink;
+}
+
+/* Gradient text helper */
+.text-gradient {
+  @apply bg-gradient-to-r from-cyan via-violet to-violet bg-clip-text text-transparent;
+}
+
+/* Subtle grid backdrop used behind hero / sections */
+.bg-grid {
+  background-image:
+    linear-gradient(rgba(148, 163, 184, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(148, 163, 184, 0.07) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* Card base */
+.card-surface {
+  @apply rounded-2xl border border-ink-line bg-ink-card/60 backdrop-blur-sm;
+}
+
+html:not(.dark) .card-surface {
+  @apply border-slate-200 bg-white;
+}
+
+/* Scrollbar (subtle, theme-aware) */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  @apply rounded-full bg-slate-600/40;
+}
+html:not(.dark) ::-webkit-scrollbar-thumb {
+  @apply bg-slate-300;
+}
+
+/* Respect reduced-motion preferences globally */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Skeleton shimmer */
+.skeleton {
+  @apply relative overflow-hidden rounded-md bg-slate-800/60;
+}
+html:not(.dark) .skeleton {
+  @apply bg-slate-200;
+}
+.skeleton::after {
+  content: "";
+  @apply absolute inset-0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(148, 163, 184, 0.12),
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.6s linear infinite;
+}
+
+/* Rich text content from the database */
+.prose-ai h2 {
+  @apply mt-8 mb-3 font-display text-2xl font-bold text-slate-100;
+}
+html:not(.dark) .prose-ai h2 {
+  @apply text-slate-900;
+}
+.prose-ai h3 {
+  @apply mt-6 mb-2 font-display text-lg font-semibold text-slate-100;
+}
+html:not(.dark) .prose-ai h3 {
+  @apply text-slate-900;
+}
+.prose-ai p {
+  @apply mb-4 leading-relaxed text-slate-300;
+}
+html:not(.dark) .prose-ai p {
+  @apply text-slate-600;
+}
+.prose-ai ul {
+  @apply mb-4 list-disc space-y-1.5 pl-5 text-slate-300;
+}
+html:not(.dark) .prose-ai ul {
+  @apply text-slate-600;
+}
+.prose-ai strong {
+  @apply text-slate-100;
+}
+html:not(.dark) .prose-ai strong {
+  @apply text-slate-900;
+}

@@ -1,0 +1,41 @@
+# Fly.io configuration for the AI Knowledge Portfolio.
+#
+# Before deploying:
+#   1. Change `app` to a unique name (or delete the line and let `fly launch` pick one).
+#   2. Create the volume:  fly volumes create portfolio_data --size 1 --region ams
+#   3. Set secrets:        fly secrets set ADMIN_USERNAME=... ADMIN_PASSWORD=... SESSION_SECRET=<random hex>
+#   4. Set SITE_URL to your app's public URL.
+
+app = "ai-knowledge-portfolio"
+primary_region = "ams"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  NODE_ENV = "production"
+  # Update this to https://<your-app-name>.fly.dev (or your custom domain)
+  SITE_URL = "https://ai-knowledge-portfolio.fly.dev"
+  DATABASE_PATH = "/app/data/portfolio.db"
+
+# Persistent volume — SQLite file survives deploys and restarts.
+[mounts]
+  source = "portfolio_data"
+  destination = "/app/data"
+
+# Runs once per deploy, before machines start: seeds the empty volume database.
+[deploy]
+  release_command = "npm run seed"
+
+[http_service]
+  internal_port = 3000
+  force_https = true
+  auto_stop_machines = false
+  auto_start_machines = true
+  min_machines_running = 1
+  processes = ["app"]
+
+# Machine sizing: the free allowance covers shared-cpu-1x 256MB. If the app
+# feels slow, bump to 512MB: fly machine update <id> --memory 512
+[processes]
+  app = "npm run start"
