@@ -18,9 +18,13 @@ WORKDIR /app
 ENV NEXT_TELEMETRY_DISABLED=1
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-# The app builds against the seeded database for sitemap metadata; the runtime
-# database lives on the Fly volume and is seeded by the release command.
-RUN mkdir -p /app/data
+# Pre-seed the build database. `next build` renders pages in parallel worker
+# processes; if the SQLite file does not exist yet, those workers race to
+# create and initialize it and fail with "database is locked". Seeding first
+# means every worker opens an already-initialized WAL database. This file is
+# build-only — it is not copied into the runtime image, where the volume is
+# seeded by the release/pre-deploy step instead.
+RUN mkdir -p /app/data && npm run seed
 RUN npm run build
 
 # ---------------------------------------------------------------------------
